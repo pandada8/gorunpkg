@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"syscall"
 )
 
@@ -27,12 +29,13 @@ func main() {
 		tmpfile += ".exe"
 	}
 
-	passthrough("go", "build", "-i", "-o", tmpfile, pkg)
+	passthrough("go", "build", "-o", tmpfile, pkg)
 	passthrough(tmpfile, os.Args[2:]...)
 }
 
 func passthrough(command string, args ...string) {
 	var err error
+	log.Printf("%s %s", command, strings.Join(args, " "))
 	cmd := exec.Command(command, args...)
 	cmd.Env = os.Environ()
 	cmd.Dir, err = os.Getwd()
